@@ -12,7 +12,7 @@ load_dotenv()
 
 st.set_page_config(
     page_title="Iron Core Fitness Dashboard",
-    page_icon="💪",
+    page_icon="🏋️‍♂️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -88,7 +88,7 @@ def convert_pdf_to_image():
 def display_header():
     """Display header with company branding"""
     st.markdown("""
-        <h1 style='text-align: center; color: #ff0000; font-size: 48px;'>💪 IRON CORE FITNESS COMPANY</h1>
+        <h1 style='text-align: center; color: #ff0000; font-size: 48px;'>🏋️‍♂️ IRON CORE FITNESS COMPANY</h1>
         <p style='text-align: center; font-size: 24px; color: #666;'>Performance Dashboard & AI Assistant</p>
         <hr style='margin-bottom: 20px;'>
     """, unsafe_allow_html=True)
