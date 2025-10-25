@@ -55,22 +55,12 @@ The Power BI chatbot answers:
 - “What’s our profit margin?”
 - “How can retention improve?”
 
-Knowledge base: [`IronCore_Fitness_Knowledge_Base.docx`](./IronCore_Fitness_Knowledge_Base.docx)
-
 ---
 
 ## ⚙️ Tech Stack
 **Data:** Python, Pandas, NumPy  
 **Visualization:** Power BI, DAX, Power Query  
 **AI:** Power Virtual Agents  
-
----
-
-## 🏁 Impact
-✅ Unified analytics + BI  
-✅ Automated insight delivery  
-✅ Improved decision-making  
-✅ Enhanced Power BI interactivity  
 
 ---
 
