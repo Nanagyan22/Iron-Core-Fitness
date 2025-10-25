@@ -1,3 +1,4 @@
+![Header](Header.png)
 # 🏋️‍♂️ IronCore Fitness Analytics & Power BI Chatbot
 
 ### 💡 Overview
@@ -61,7 +62,7 @@ Knowledge base: [`IronCore_Fitness_Knowledge_Base.docx`](./IronCore_Fitness_Know
 ## ⚙️ Tech Stack
 **Data:** Python, Pandas, NumPy  
 **Visualization:** Power BI, DAX, Power Query  
-**AI:** Power Virtual Agents, Azure OpenAI  
+**AI:** Power Virtual Agents  
 
 ---
 
@@ -78,5 +79,8 @@ Knowledge base: [`IronCore_Fitness_Knowledge_Base.docx`](./IronCore_Fitness_Know
 📧 [francisaffulgyan@gmail.com](mailto:francisaffulgyan@gmail.com)  
 🔗 [LinkedIn](https://www.linkedin.com/in/francis-afful-gyan-2b27a5153/)  
 📅 October 2025  
-🌐 [Live Demo](https://newprojectchurn.streamlit.app/)  
+🌐 [Live Demo](https://iron-core-fitness.streamlit.app/)  
 📊 *Project Status: Active Development*
+
+## Thank You
+![Thank You](Thankyou1.png)
