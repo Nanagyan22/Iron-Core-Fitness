@@ -1,6 +1,6 @@
 import os
-import re
 import google.genai as genai
+
 
 
 def get_client():
@@ -9,23 +9,6 @@ def get_client():
     if not api_key:
         raise ValueError("GEMINI_API_KEY not found in environment variables")
     return genai.Client(api_key=api_key)
-
-
-#  Clean output to remove spacing/formatting issues
-def clean_response_text(text: str) -> str:
-    """Clean AI text output to remove weird spacing and formatting issues."""
-    if not text:
-        return ""
-    # Remove spaces within numbers (e.g., "4 , 0 9 0 , 0 0 0" → "4,090,000")
-    text = re.sub(r"(\d)\s*,\s*(\d)", r"\1,\2", text)
-    text = re.sub(r"(\d)\s+(\d)", r"\1\2", text)
-    # Add missing spaces after punctuation (e.g., "2,915,528.00,and" → "2,915,528.00, and")
-    text = re.sub(r"([.,])(?=[A-Za-z])", r"\1 ", text)
-    # Fix double commas
-    text = re.sub(r",\s*,", ", ", text)
-    # Normalize multiple spaces
-    text = re.sub(r"\s{2,}", " ", text)
-    return text.strip()
 
 
 def chat_with_knowledge_base(user_question: str, knowledge_base: str, chat_history: list = None) -> str:
@@ -101,8 +84,7 @@ Remember: Use specific numbers, be professional, and format your responses clear
             }
         )
         
-        clean_text = clean_response_text(response.text)
-        return clean_text or "I apologize, but I couldn't generate a response. Please try again."
+        return response.text or "I apologize, but I couldn't generate a response. Please try again."
     
     except Exception as e:
         return f"Error: {str(e)}"
@@ -200,8 +182,7 @@ FORMAT REQUIREMENTS:
             }
         )
         
-        clean_text = clean_response_text(response.text)
-        return clean_text or "Unable to generate report."
+        return response.text or "Unable to generate report."
     
     except Exception as e:
         return f"Error generating report: {str(e)}"
