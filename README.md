@@ -31,12 +31,13 @@ A data-driven fitness analytics project combining **Data Science** and **Busines
 
 ---
 
-## 🧠 Data Science + BI Strategy
-| Data Science | Business Intelligence |
-|---------------|-----------------------|
-| Data cleaning & EDA (Python, Pandas) | Power BI dashboards & KPIs |
-| KPI computation & trend modeling | Interactive visualizations |
-| Insight automation | Chatbot integration |
+## 🧠 BI Strategy
+| Business Intelligence |
+|-----------------------|
+| Power BI dashboards & KPIs |
+| Interactive visualizations |
+| Insight automation | 
+| Chatbot integration |
 
 ---
 
