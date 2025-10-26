@@ -11,7 +11,7 @@ def get_client():
     return genai.Client(api_key=api_key)
 
 
-# ✅ Clean output to remove spacing/formatting issues
+#  Clean output to remove spacing/formatting issues
 def clean_response_text(text: str) -> str:
     """Clean AI text output to remove weird spacing and formatting issues."""
     if not text:
