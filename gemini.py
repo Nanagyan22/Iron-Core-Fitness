@@ -1,191 +1,188 @@
-# ===============================================================
-# gemini.py — Iron Core Fitness Predictive Analytics Assistant
-# ===============================================================
-
 import os
 import google.genai as genai
-from dotenv import load_dotenv
 
-# ---------------------------------------------------------------
-# 1. Load environment and configure Gemini client
-# ---------------------------------------------------------------
-load_dotenv()  # Automatically load GEMINI_API_KEY from .env
+
 
 def get_client():
-    """Initialize and return Gemini client."""
+    """Get or create Gemini client"""
     api_key = os.environ.get("GEMINI_API_KEY")
-
     if not api_key:
-        raise ValueError("Missing GEMINI_API_KEY. Please check your .env file or environment variables.")
-
-    genai.configure(api_key=api_key)
-    return genai
+        raise ValueError("GEMINI_API_KEY not found in environment variables")
+    return genai.Client(api_key=api_key)
 
 
-# ---------------------------------------------------------------
-# 2. Chat with knowledge base (main assistant logic)
-# ---------------------------------------------------------------
 def chat_with_knowledge_base(user_question: str, knowledge_base: str, chat_history: list = None) -> str:
     """
-    Chat with AI using the knowledge base as context.
-    Produces clear, factual, and data-grounded insights.
+    Chat with AI using the knowledge base as context with enhanced prompting.
     """
-    system_prompt = f"""You are an expert AI assistant for Iron Core Fitness Company.
-Your goal is to analyze business data and provide professional, actionable insights.
+    system_prompt = f"""You are an expert AI assistant for Iron Core Fitness Company. You specialize in analyzing fitness business data and providing actionable insights.
 
-INSTRUCTIONS:
-- Use ONLY the data and facts from the knowledge base provided.
-- Give clear, confident, and structured responses.
-- Always back up your answers with numbers, percentages, or metrics.
-- Maintain a professional and readable tone suitable for business reports.
+YOUR ROLE:
+- Answer questions using ONLY the knowledge base and dataset provided below
+- Provide clear, specific, and data-driven responses
+- Use exact numbers and metrics from the data
+- Format your answers in a professional, easy-to-read manner
+- If a question is outside the knowledge base, politely explain you can only answer questions about Iron Core Fitness data
 
-RESPONSE RULES:
-1. Begin with a direct, one-sentence answer.
-2. Follow with supporting figures and observations.
-3. Use bullet points (with hyphens -) for clarity.
-4. Avoid fluff — focus on insights and numbers.
-5. Never use asterisks, markdown bold, or italics.
-6. Always format money as $X,XXX.00 (two decimal places).
-7. Format percentages with one decimal place (e.g., 43.5%).
-8. If the question is not covered by the knowledge base, say:
-   "I’m sorry, I can only answer questions based on the Iron Core Fitness dataset."
+RESPONSE GUIDELINES:
+1. Start with a direct answer to the question
+2. Support your answer with specific numbers and facts from the data
+3. Use bullet points (with hyphens -) when presenting multiple items
+4. Add brief context or insights when relevant
+5. Keep responses concise but comprehensive
+6. Do NOT use asterisks for bold or emphasis - write in plain text
+7. Format numbers clearly with dollar signs and commas (e.g., $4,100,000)
+8. Keep your writing simple and readable
+9. Always separate numbers from words with a space
+10.Format numbers with commas for thousands and two decimals for cents
+11.Example: "$57,570.00 and Maintenance at $54,223.00"
 
-EXAMPLE RESPONSES:
 
-Q: "What’s the total revenue?"
-A: The total revenue is $4,100,000.00.  
-- This comes from 100 payment transactions  
-- Average payment per client: $41,000.00  
-- Revenue growth compared to last year: +12.4%
+EXAMPLE INTERACTIONS:
 
-Q: "Which membership is most popular?"
-A: Silver membership is the most popular, with 35 members.  
-- Gold: 33 members  
-- Platinum: 32 members  
-- The distribution is balanced, indicating consistent appeal across tiers.
+User: "What's the total revenue?"
+Good Response: "The total revenue is $4,100,000.00. This comes from 100 payment transactions with an average payment of $41,000.00."
 
-Q: "How can retention be improved?"
-A: Current retention rate is 44% (44 of 100 members are active).  
-- Identify reasons for 56 inactive members  
-- Offer re-engagement incentives  
-- Personalize programs to common goals  
-- Track improvement monthly
+User: "Which membership is most popular?"
+Good Response: "Silver membership is the most popular with 35 members, followed by Gold with 33 members and Platinum with 32 members. This shows a fairly balanced distribution across all membership tiers."
+
+User: "How can we improve retention?"
+Good Response: "Based on the data, we currently have 44 active clients out of 100 total members (that's a 44% active rate). To improve retention, consider:
+- Targeting inactive members with re-engagement campaigns
+- Analyzing why 56 members became inactive
+- Creating personalized programs based on the most common goals
+- Improving trainer-client matching effectiveness"
 
 KNOWLEDGE BASE:
 {knowledge_base}
-"""
 
+Remember: Use specific numbers, be professional, and format your responses clearly. Only use information from the knowledge base above.
+"""
+    
     try:
         client = get_client()
-
+        
         if chat_history is None:
             chat_history = []
-
-        messages = [system_prompt] + chat_history[-10:] + [f"User Question: {user_question}"]
+        
+        messages = [system_prompt]
+        
+        for msg in chat_history[-10:]:
+            messages.append(msg)
+        
+        messages.append(f"User Question: {user_question}")
+        
         full_prompt = "\n\n".join(messages)
-
+        
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=full_prompt,
             config={
-                "temperature": 0.25,
-                "top_p": 0.9,
-                "max_output_tokens": 1200,
+                "temperature": 0.3,
+                "top_p": 0.95,
+                "max_output_tokens": 1024,
             }
         )
-
-        return response.text.strip() if response.text else "I couldn’t generate a response. Please try again."
-
+        
+        return response.text or "I apologize, but I couldn't generate a response. Please try again."
+    
     except Exception as e:
         return f"Error: {str(e)}"
 
 
-# ---------------------------------------------------------------
-# 3. Comprehensive business insights report generator
-# ---------------------------------------------------------------
 def generate_comprehensive_report(knowledge_base: str) -> str:
     """
-    Generate a structured, professional business insights report.
+    Generate a comprehensive insights report from the dataset and dashboard.
     """
-    prompt = f"""You are Francis Afful Gyan, Business Intelligence Specialist for Iron Core Fitness.
-Generate a complete professional business report (dated 25 October 2025) using ONLY the data provided below.
+    prompt = f"""You are Francis Afful Gyan, a Business Intelligence Specialist for Iron Core Fitness. Generate a comprehensive, professional business insights report dated 25 October 2025.
 
 KNOWLEDGE BASE:
 {knowledge_base}
 
-FORMAT THE REPORT AS FOLLOWS:
+Create a detailed report with these sections:
 
+---
 # IRON CORE FITNESS BUSINESS INSIGHTS REPORT
+
 Date: 25 October 2025
 Prepared by: Francis Afful Gyan, Business Intelligence Specialist
 
+---
+
 ## 1. Executive Summary
-- Brief overview of company performance and key findings
-- Highlight major insights and data-driven results
+- Provide a high-level overview of the company's current state
+- Highlight key financial metrics and performance indicators
+- Summarize the most critical findings
 
 ## 2. Financial Performance Analysis
-- Total revenue, expenses, and net profit (exact values)
-- Profit margin percentage
-- Notable trends and growth rates
-- Overall financial health assessment
+- Total revenue, expenses, and net profit with exact figures
+- Profit margin analysis
+- Revenue trends and patterns
+- Financial health assessment
 
 ## 3. Client Analytics and Demographics
-- Active vs inactive members
-- Age range and average BMI
+- Total members (active vs inactive)
+- Age demographics and average BMI
 - Gender distribution
-- Common fitness goals and behavioral insights
+- Client goals and motivations
 
 ## 4. Membership Performance
-- Distribution by tier (Platinum, Gold, Silver)
-- Membership retention and churn analysis
-- Lifetime value comparison across tiers
+- Distribution across Platinum, Gold, and Silver tiers
+- Membership value analysis
+- Retention insights
 
 ## 5. Payment and Revenue Trends
-- Payment method breakdown
-- Payment completion rate
+- Payment methods analysis
+- Payment status breakdown
 - Average transaction value
-- Revenue optimization recommendations
+- Revenue optimization opportunities
 
 ## 6. Expense Analysis
-- Expense categories and their shares
-- Top cost drivers
-- Opportunities for cost efficiency
+- Total expenses breakdown by category
+- Largest expense areas
+- Expense efficiency assessment
+- Cost optimization opportunities
 
 ## 7. Trainer Performance
 - Number of active trainers
-- Trainer-to-client ratio
-- Trainer effectiveness and utilization rates
+- Client-to-trainer ratio
+- Trainer utilization insights
 
-## 8. Challenges and Opportunities
-- Data-backed challenges affecting performance
-- Areas with strong potential for growth
+## 8. Key Challenges and Opportunities
+- Identify major challenges based on the data
+- Highlight growth opportunities
+- Risk factors to address
 
 ## 9. Strategic Recommendations
-- 5–7 actionable recommendations with expected impact
-- Include measurable KPIs for tracking results
+- 5-7 specific, actionable recommendations
+- Prioritize by potential impact
+- Include metrics to track success
 
-STYLE RULES:
-- Use clear markdown headings (#, ##)
-- Use bullet points with hyphens (-)
-- No asterisks, bold, or italics
-- Keep the tone businesslike, factual, and insight-focused
-- Use formatted currency and percentages consistently
+FORMAT REQUIREMENTS:
+- Use clear headings with # and ## for markdown
+- Include specific numbers and percentages
+- Use bullet points with hyphens (-) for lists
+- Do NOT use asterisks for bold text - write in plain, readable text
+- Format dollar amounts clearly (e.g., $4,100,000.00)
+- Be professional and data-driven
+- Make it actionable and insightful
+- Keep text simple and readable without special formatting symbols
 """
-
+    
     try:
         client = get_client()
-
+        
         response = client.models.generate_content(
             model="gemini-2.5-pro",
             contents=prompt,
             config={
-                "temperature": 0.35,
-                "top_p": 0.9,
+                "temperature": 0.4,
+                "top_p": 0.95,
                 "max_output_tokens": 8192,
             }
         )
-
-        return response.text.strip() if response.text else "Unable to generate report."
-
+        
+        return response.text or "Unable to generate report."
+    
     except Exception as e:
         return f"Error generating report: {str(e)}"
