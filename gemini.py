@@ -1,15 +1,28 @@
+# gemini.py — Iron Core Fitness Predictive Analytics Assistant
+
+
 import os
 import google.genai as genai
+from dotenv import load_dotenv
 
 
+# 1. Load .env automatically and configure the Gemini client
+
+load_dotenv()  # This loads variables from your .env file into os.environ
 
 def get_client():
     """Get or create Gemini client"""
     api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        raise ValueError("GEMINI_API_KEY not found in environment variables")
-    return genai.Client(api_key=api_key)
 
+    if not api_key:
+        raise ValueError("GEMINI_API_KEY not found in environment variables. "
+                         "Please check your .env file or system environment.")
+
+    # Configure the client once
+    genai.configure(api_key=api_key)
+    return genai
+
+# 2. Chat function for interactive Q&A with dataset
 
 def chat_with_knowledge_base(user_question: str, knowledge_base: str, chat_history: list = None) -> str:
     """
@@ -34,46 +47,30 @@ RESPONSE GUIDELINES:
 7. Format numbers clearly with dollar signs and commas (e.g., $4,100,000)
 8. Keep your writing simple and readable
 9. Always separate numbers from words with a space
-10.Format numbers with commas for thousands and two decimals for cents
-11.Example: "$57,570.00 and Maintenance at $54,223.00"
-
-
-EXAMPLE INTERACTIONS:
-
-User: "What's the total revenue?"
-Good Response: "The total revenue is $4,100,000.00. This comes from 100 payment transactions with an average payment of $41,000.00."
-
-User: "Which membership is most popular?"
-Good Response: "Silver membership is the most popular with 35 members, followed by Gold with 33 members and Platinum with 32 members. This shows a fairly balanced distribution across all membership tiers."
-
-User: "How can we improve retention?"
-Good Response: "Based on the data, we currently have 44 active clients out of 100 total members (that's a 44% active rate). To improve retention, consider:
-- Targeting inactive members with re-engagement campaigns
-- Analyzing why 56 members became inactive
-- Creating personalized programs based on the most common goals
-- Improving trainer-client matching effectiveness"
+10. Format numbers with commas for thousands and two decimals for cents
+11. Example: "$57,570.00 and Maintenance at $54,223.00"
 
 KNOWLEDGE BASE:
 {knowledge_base}
 
 Remember: Use specific numbers, be professional, and format your responses clearly. Only use information from the knowledge base above.
 """
-    
+
     try:
         client = get_client()
-        
+
         if chat_history is None:
             chat_history = []
-        
+
         messages = [system_prompt]
-        
+
         for msg in chat_history[-10:]:
             messages.append(msg)
-        
+
         messages.append(f"User Question: {user_question}")
-        
+
         full_prompt = "\n\n".join(messages)
-        
+
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=full_prompt,
@@ -83,12 +80,13 @@ Remember: Use specific numbers, be professional, and format your responses clear
                 "max_output_tokens": 1024,
             }
         )
-        
+
         return response.text or "I apologize, but I couldn't generate a response. Please try again."
-    
+
     except Exception as e:
         return f"Error: {str(e)}"
 
+# 3. Report generator for automated business insights
 
 def generate_comprehensive_report(knowledge_base: str) -> str:
     """
@@ -168,10 +166,10 @@ FORMAT REQUIREMENTS:
 - Make it actionable and insightful
 - Keep text simple and readable without special formatting symbols
 """
-    
+
     try:
         client = get_client()
-        
+
         response = client.models.generate_content(
             model="gemini-2.5-pro",
             contents=prompt,
@@ -181,8 +179,8 @@ FORMAT REQUIREMENTS:
                 "max_output_tokens": 8192,
             }
         )
-        
+
         return response.text or "Unable to generate report."
-    
+
     except Exception as e:
         return f"Error generating report: {str(e)}"
