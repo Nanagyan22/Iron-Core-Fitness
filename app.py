@@ -160,14 +160,13 @@ def main():
         
         with st.expander("💡 Sample Questions"):
             st.markdown("""
-            - What's the total revenue and profit?
+            - What's our profit margin?
             - Which membership has the most subscribers?
             - How many active clients do we have?
             - What's the average age of our members?
             - What are the top expense categories?
             - What payment methods are most popular?
             - What's the most common fitness goal?
-            - What's our profit margin?
             """)
 
 if __name__ == "__main__":
