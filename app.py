@@ -101,13 +101,17 @@ def main():
     main_col, chat_col = st.columns([2, 1])
     
     with main_col:
-        st.markdown("### 📊 BI Dashboard")
+        st.markdown("### 📊 Interactive Power BI Dashboard")
         
-        dashboard_image = convert_pdf_to_image()
-        if dashboard_image:
-            st.image(dashboard_image, use_container_width=True, caption="Iron Core Fitness Analytics Dashboard")
-        else:
-            st.warning("Dashboard visualization unavailable")
+        # Embed Power BI live report instead of static image
+        st.markdown(
+            """
+            <iframe title="GYM_Project" width="100%" height="600"
+            src="https://app.powerbi.com/view?r=eyJrIjoiZTRmNGQ1YzEtMTcyMy00MWQyLWI5YzAtOWRhMmU2ODU3NTJiIiwidCI6IjhkMWE2OWVjLTAzYjUtNDM0NS1hZTIxLWRhZDExMmY1ZmI0ZiIsImMiOjN9"
+            frameborder="0" allowFullScreen="true"></iframe>
+            """,
+            unsafe_allow_html=True
+        )
         
         st.markdown("<br>", unsafe_allow_html=True)
         
